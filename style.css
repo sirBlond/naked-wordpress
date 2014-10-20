@@ -520,6 +520,15 @@ header nav ul li a {
   color: #888888;
   font-size: 14px;
 }
+.menu-item-has-children > a:after {
+  content: "\2193";
+  padding-left: 5px;
+}
+.sub-menu {
+  display: none;
+  position: absolute;
+  left: 0;
+}
 /* Posts/Articles
 -------------------------------------------------------------- */
 article {
