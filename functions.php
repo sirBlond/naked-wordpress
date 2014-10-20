@@ -16,7 +16,6 @@ add_theme_support( 'automatic-feed-links' );
 /* Remove WP generator meta tag.
 /*-----------------------------------------------------------------------------------*/
 add_filter('the_generator', 'tprs_remove_wp_version');
-
 function tprs_remove_wp_version() {
   return '';
 }
@@ -71,18 +70,38 @@ add_action( 'wp_enqueue_scripts', 'naked_scripts' ); // Register this fxn and al
 /*-----------------------------------------------------------------------------------*/
 /* Login page customisations.
 /*-----------------------------------------------------------------------------------*/
+
+// include stylesheet for wp-login.php
 add_action('login_enqueue_scripts', 'naked_login_stylesheet');
 function naked_login_stylesheet() {
   wp_register_style('login-styles', get_template_directory_uri().'/styles/login.css');
   wp_enqueue_style('login-styles');
 }
 
+// changing link from wordpress.org to website homepage address.
 add_filter('login_headerurl', 'tprs_login_logo_url');
 function tprs_login_logo_url() {
   return home_url();
 }
 
+// changing default title to the blog name.
 add_filter('login_headertitle', 'tprs_login_logo_url_title');
 function tprs_login_logo_url_title() {
   return get_bloginfo('name');
 }
+
+/*-----------------------------------------------------------------------------------*/
+/* Dashboard customisations.
+/*-----------------------------------------------------------------------------------*/
+
+// removing "About Wordpress" from admin bar.
+add_action( 'admin_bar_menu', 'naked_remove_wp_logo', 999 );
+function naked_remove_wp_logo($wp_admin_bar) {
+  $wp_admin_bar->remove_node('wp-logo');
+}
+
+// removing "Wordpress News" dashboard widget.
+add_action('wp_dashboard_setup', 'naked_remove_dashboard_widget');
+function naked_remove_dashboard_widget() {
+  remove_meta_box('dashboard_primary', 'dashboard', 'side');
+} 
