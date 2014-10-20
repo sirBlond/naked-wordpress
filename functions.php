@@ -56,16 +56,33 @@ add_action( 'widgets_init', 'naked_register_sidebars' );
 /* Enqueue Styles and Scripts
 /*-----------------------------------------------------------------------------------*/
 
-function naked_scripts()  { 
-
+function naked_scripts() {
   // get the theme directory style.css and link to it in the header
   wp_enqueue_style( 'naked-style', get_template_directory_uri() . '/style.css', '10000', 'all' );
-      
+
   // add fitvid
   wp_enqueue_script( 'naked-fitvid', get_template_directory_uri() . '/js/jquery.fitvids.js', array( 'jquery' ), NAKED_VERSION, true );
-  
+
   // add theme scripts
   wp_enqueue_script( 'naked', get_template_directory_uri() . '/js/theme.min.js', array(), NAKED_VERSION, true );
-  
 }
 add_action( 'wp_enqueue_scripts', 'naked_scripts' ); // Register this fxn and allow Wordpress to call it automatcally in the header
+
+/*-----------------------------------------------------------------------------------*/
+/* Login page customisations.
+/*-----------------------------------------------------------------------------------*/
+add_action('login_enqueue_scripts', 'naked_login_stylesheet');
+function naked_login_stylesheet() {
+  wp_register_style('login-styles', get_template_directory_uri().'/styles/login.css');
+  wp_enqueue_style('login-styles');
+}
+
+add_filter('login_headerurl', 'tprs_login_logo_url');
+function tprs_login_logo_url() {
+  return home_url();
+}
+
+add_filter('login_headertitle', 'tprs_login_logo_url_title');
+function tprs_login_logo_url_title() {
+  return get_bloginfo('name');
+}
