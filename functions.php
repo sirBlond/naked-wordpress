@@ -15,7 +15,6 @@ define('NAKED_VERSION', 1.0);
 if (!function_exists('naked_theme_features')) {
   add_action('after_setup_theme', 'naked_theme_features');
   function naked_theme_features() {
-
     $theme_features = array(
       'automatic-feed-links',
       'post-formats' => array(
@@ -131,13 +130,17 @@ function tprs_login_logo_url_title() {
  * Dashboard customisations.
  */
 
-// removing "About Wordpress" from admin bar.
+/**
+ * Removing "About Wordpress" from admin bar.
+ */
 add_action( 'admin_bar_menu', 'naked_remove_wp_logo', 999 );
 function naked_remove_wp_logo($wp_admin_bar) {
   $wp_admin_bar->remove_node('wp-logo');
 }
 
-// removing "Wordpress News" dashboard widget.
+/**
+ * Removing "Wordpress News" dashboard widget.
+ */
 add_action('wp_dashboard_setup', 'naked_remove_dashboard_widget');
 function naked_remove_dashboard_widget() {
   remove_meta_box('dashboard_primary', 'dashboard', 'side');
