@@ -5,29 +5,65 @@
   /*-----------------------------------------------------------------------------------*/
 
 // Define the version so we can easily replace it throughout the theme
-define( 'NAKED_VERSION', 1.0 );
+define('NAKED_VERSION', 1.0);
 
-/*-----------------------------------------------------------------------------------*/
-/* Add Rss feed support to Head section
-/*-----------------------------------------------------------------------------------*/
-add_theme_support('automatic-feed-links');
+/**
+ * Register Theme Features:
+ * Automatic Feed Links, Post Formats, Featured Images,
+ * HTML5 Markup, Title tag, Translation.
+ */
+if (!function_exists('naked_theme_features')) {
+  add_action('after_setup_theme', 'naked_theme_features');
+  function naked_theme_features() {
 
-/*-----------------------------------------------------------------------------------*/
-/* Add thumbnails support to posts and pages.
-/*-----------------------------------------------------------------------------------*/
-add_theme_support('post-thumbnails');
+    $theme_features = array(
+      'automatic-feed-links',
+      'post-formats' => array(
+        'title' => 'post-formats',
+        'args' => array(
+          'status',
+          'gallery',
+          'image',
+          'video',
+          'audio'
+        )
+      ),
+      'post-thumbnails',
+      'html5' => array(
+        'title' => 'html5',
+        'args' => array(
+          'search-form',
+          'comment-form',
+          'comment-list',
+          'gallery'
+        )
+      ),
+      'title-tag'
+    );
 
-/*-----------------------------------------------------------------------------------*/
-/* Remove WP generator meta tag.
-/*-----------------------------------------------------------------------------------*/
-add_filter('the_generator', 'tprs_remove_wp_version');
-function tprs_remove_wp_version() {
+    foreach($theme_features as $feature) {
+      if(is_array($feature)){
+        add_theme_support($feature['title'], $feature['args']);
+      } else {
+        add_theme_support($feature);
+      }
+    }
+
+    load_theme_textdomain('naked', get_template_directory().'/langs');
+  }
+}
+
+/*
+ * Remove WP generator meta tag.
+ */
+add_filter('the_generator', 'naked_remove_wp_version');
+function naked_remove_wp_version() {
   return '';
 }
 
-/*-----------------------------------------------------------------------------------*/
-/* Register main menu for Wordpress use
-/*-----------------------------------------------------------------------------------*/
+/**
+ * Register Main menu.
+ */
 register_nav_menus( 
   array(
     'primary' =>  __( 'Primary Menu', 'naked' ), // Register the Primary menu
@@ -36,9 +72,9 @@ register_nav_menus(
   )
 );
 
-/*-----------------------------------------------------------------------------------*/
-/* Activate sidebar for Wordpress use
-/*-----------------------------------------------------------------------------------*/
+/**
+ * Activate sidebar.
+ */
 function naked_register_sidebars() {
   register_sidebar(array(       // Start a series of sidebars to register
     'id' => 'sidebar',          // Make an ID
@@ -56,25 +92,21 @@ function naked_register_sidebars() {
 // adding sidebars to Wordpress (these are created in functions.php)
 add_action( 'widgets_init', 'naked_register_sidebars' );
 
-/*-----------------------------------------------------------------------------------*/
-/* Enqueue Styles and Scripts
-/*-----------------------------------------------------------------------------------*/
-
+/**
+ * Enqueue theme styles and scripts.
+ */
+add_action('wp_enqueue_scripts', 'naked_scripts');
 function naked_scripts() {
-  // get the theme directory style.css and link to it in the header
-  wp_enqueue_style( 'naked-style', get_template_directory_uri() . '/style.css', '10000', 'all' );
-
-  // add fitvid
-  wp_enqueue_script( 'naked-fitvid', get_template_directory_uri() . '/js/jquery.fitvids.js', array( 'jquery' ), NAKED_VERSION, true );
+  wp_enqueue_style('naked-style', get_template_directory_uri().'/style.css', '10000', 'all');
+  wp_enqueue_script('naked-fitvid', get_template_directory_uri().'/js/jquery.fitvids.js', array('jquery'), NAKED_VERSION, true );
 
   // add theme scripts
-  wp_enqueue_script( 'naked', get_template_directory_uri() . '/js/theme.min.js', array(), NAKED_VERSION, true );
+  wp_enqueue_script('naked', get_template_directory_uri() . '/js/theme.min.js', array(), NAKED_VERSION, true );
 }
-add_action( 'wp_enqueue_scripts', 'naked_scripts' ); // Register this fxn and allow Wordpress to call it automatcally in the header
 
-/*-----------------------------------------------------------------------------------*/
-/* Login page customisations.
-/*-----------------------------------------------------------------------------------*/
+/**
+ * Login page customisations.
+ */
 
 // include stylesheet for wp-login.php
 add_action('login_enqueue_scripts', 'naked_login_stylesheet');
@@ -95,9 +127,9 @@ function tprs_login_logo_url_title() {
   return get_bloginfo('name');
 }
 
-/*-----------------------------------------------------------------------------------*/
-/* Dashboard customisations.
-/*-----------------------------------------------------------------------------------*/
+/**
+ * Dashboard customisations.
+ */
 
 // removing "About Wordpress" from admin bar.
 add_action( 'admin_bar_menu', 'naked_remove_wp_logo', 999 );
